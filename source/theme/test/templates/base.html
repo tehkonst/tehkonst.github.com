@@ -1,6 +1,0 @@
-<!DOCTYPE html>
-<meta charset="utf-8" />
-<title>{% block title %}{{ SITENAME }}{%endblock%}</title>
-{% if FEED_URL -%}<link rel="alternate" type="application/atom+xml" title="{{ FEED_TITLE }}" href="{{ FEED_URL }}">{% endif -%}
-<h1><a href={{ SITEURL }}>{{ SITENAME }}</a></h1>
-{% block content %}{% endblock %}

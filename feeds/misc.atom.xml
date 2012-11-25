@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>НИОЧЕМ</title><link href="http://tehkonst.github.com/" rel="alternate"></link><link href="http://tehkonst.github.com/feeds/misc.atom.xml" rel="self"></link><id>http://tehkonst.github.com/</id><updated>2012-03-02T14:01:01+04:00</updated><entry><title>Hello world!</title><link href="http://tehkonst.github.com/hello.html" rel="alternate"></link><updated>2012-03-02T14:01:01+04:00</updated><author><name>Konstantin</name></author><id>tag:tehkonst.github.com,2012-03-02:hello.html</id><summary type="html">&lt;p&gt;Hello from Pelican!
-UNO2&lt;/p&gt;
-</summary></entry></feed>

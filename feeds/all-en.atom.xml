@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>НИОЧЕМ</title><link href="http://tehkonst.github.com/" rel="alternate"></link><link href="http://tehkonst.github.com/feeds/all-en.atom.xml" rel="self"></link><id>http://tehkonst.github.com/</id><updated>2012-10-31T13:27:09+04:00</updated><entry><title>Вчера дуло!</title><link href="http://tehkonst.github.com/what.html" rel="alternate"></link><updated>2012-10-31T13:27:09+04:00</updated><author><name>Konstantin The</name></author><id>tag:tehkonst.github.com,2012-10-31:what.html</id><summary type="html">&lt;p&gt;Абракадабра пеликановская.&lt;/p&gt;
-</summary></entry><entry><title>Hello world!</title><link href="http://tehkonst.github.com/hello.html" rel="alternate"></link><updated>2012-10-26T10:24:14+04:00</updated><author><name>Konstantin The</name></author><id>tag:tehkonst.github.com,2012-10-26:hello.html</id><summary type="html">&lt;p&gt;Hello from Pelican!
-UNO2&lt;/p&gt;
-</summary></entry></feed>
