@@ -1,0 +1,984 @@
+Русские тут
+============================================================================
+
+============================================================================
+
+============================================================================
+http://tehkonst.github.com/
+============================================================================
+2012-11-20T09:06:13+04:00
+============================================================================
+Django-markdown — поддержка Markdown в Django
+============================================================================
+
+============================================================================
+2012-11-20T09:06:13+04:00
+============================================================================
+Константин
+============================================================================
+tag:tehkonst.github.com,2012-11-20:git-markdown.html
+============================================================================
+<hr class="docutils" />
+<div class="contents topic" id="id1">
+<p class="topic-title first">Содержание:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id2" id="id5">Установка</a></li>
+<li><a class="reference internal" href="#id3" id="id6">Подключение к проекту</a></li>
+<li><a class="reference internal" href="#id4" id="id7">Использование и настройка</a></li>
+</ul>
+</div>
+<hr class="docutils" />
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference external" href="http://ru.wikipedia.org/wiki/Markdown">Markdown</a> (маркдаун) — облегчённый язык разметки. Первоначально создан
+Джоном Грубером (англ. John Gruber) и Аароном Шварцем, целью которых
+являлось создание максимально удобочитаемого и удобного в публикации
+облегчённого языка разметки. Многие идеи языка были позаимствованы из
+существующих соглашений по разметке текста в электронных письмах.
+Реализации языка Markdown преобразуют текст в формате Markdown в валидный,
+правильно построенный XHTML и заменяет левые угловые скобки («&lt;») и
+амперсанды («&amp;») на соответствующие коды сущностей.</p>
+</div>
+<p>Иногда возникает необходимость использовать язык разметки для редактирования
+текстов. HTML редактировать руками при набивании текстов никто не хочет да это
+и не нужно, а вот какой нибудь wiki-синтаксис или <a class="reference external" href="http://ru.wikipedia.org/wiki/Markdown">Markdown</a> интуитивно понятны
+программистам. Конечно секретаршу трудно обучить не GUI-евой разметке (хотя
+возможно), но если проект предполагает нечастые обновления силами
+квалифицированного персонала, <a class="reference external" href="http://ru.wikipedia.org/wiki/Markdown">Markdown</a> становится очень удобен.</p>
+<p>Для своих задач я написал <a class="reference external" href="https://github.com/klen/django_markdown">Django-markdown</a> — <a class="reference external" href="http://django-project.com">Django</a> приложение позволяющее
+быстро и несложно подключить <a class="reference external" href="http://ru.wikipedia.org/wiki/Markdown">Markdown</a> синтаксис на проект.</p>
+<p>Список возможностей:</p>
+<ul class="simple">
+<li>Поддержка <a class="reference external" href="http://ru.wikipedia.org/wiki/Markdown">Markdown</a> синтаксиса в шаблонах;</li>
+<li>Поддержка в стандартных <a class="reference external" href="https://docs.djangoproject.com/en/dev/ref/contrib/flatpages/">Django-flatpages</a>;</li>
+<li>Поддержка в стандартном <a class="reference external" href="https://docs.djangoproject.com/en/dev/ref/contrib/admin/">Django-admin</a>;</li>
+<li>Поддержка в формах и виджетах (wysiwyg).</li>
+</ul>
+<img alt="sources/django-markdown.jpg" src="sources/django-markdown.jpg" />
+<p>Чаще всего я использую это приложение, когда на проекте есть <a class="reference external" href="https://docs.djangoproject.com/en/dev/ref/contrib/flatpages/">Django-flatpages</a>
+для удобства редактирования.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last"><a class="reference external" href="https://github.com/klen/django_markdown">Django-markdown</a> предназначен для версии Django 1.3 и выше.</p>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id5">Установка</a></h2>
+<p>Приложение можно установить из <a class="reference external" href="http://pypi.python.org">PyPi</a></p>
+<div class="highlight"><pre>easy_install django-markdown
+
+<span class="c"># Или с помощью pip</span>
+
+pip install django-markdown
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id6">Подключение к проекту</a></h2>
+<p>Необходимо добавить <cite>django_markdown</cite> в <strong>INSTALLED_APPS</strong>, settings.py:</p>
+<div class="highlight"><pre><span class="n">INSTALLED_APPS</span> <span class="o">+=</span> <span class="s">&#39;django_markdown&#39;</span><span class="p">,</span>
+</pre></div>
+<p>И создать url в базовом url_config, urls.py:</p>
+<div class="highlight"><pre><span class="n">url</span><span class="p">(</span><span class="s">&#39;^markdown/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span> <span class="s">&#39;django_markdown.urls&#39;</span><span class="p">)),</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Подключать URL необходимо если вы хотите использовать функционал
+предпросмотра в виджетах.</p>
+</div>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id7">Использование и настройка</a></h2>
+<ol class="arabic simple">
+<li>Использование в формах:</li>
+</ol>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">django_markdown.widgets</span> <span class="kn">import</span> <span class="n">MarkdownWidget</span>
+
+<span class="k">class</span> <span class="nc">MyMarkdownForm</span><span class="p">(</span><span class="n">forms</span><span class="o">.</span><span class="n">Form</span><span class="p">):</span>
+    <span class="n">content</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span> <span class="n">widget</span><span class="o">=</span><span class="n">MarkdownWidget</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Просто подключаем виджет к нужному полю.</p>
+</div>
+<ol class="arabic simple" start="2">
+<li>В стандартном <a class="reference external" href="https://docs.djangoproject.com/en/dev/ref/contrib/admin/">Django-admin</a>:</li>
+</ol>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">django_markdown.admin</span> <span class="kn">import</span> <span class="n">MarkdownModelAdmin</span>
+
+<span class="n">adimin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">MyModel</span><span class="p">,</span> <span class="n">MarkdownModelAdmin</span><span class="p">)</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Все поля типа TextField будут выведены с использованием <a class="reference external" href="http://ru.wikipedia.org/wiki/Markdown">Markdown</a> виджета</p>
+</div>
+<ol class="arabic simple" start="3">
+<li><a class="reference external" href="https://docs.djangoproject.com/en/dev/ref/contrib/flatpages/">Django-flatpages</a>:</li>
+</ol>
+<div class="highlight"><pre><span class="c"># В вашем базовом url_config</span>
+<span class="kn">from</span> <span class="nn">django_markdown</span> <span class="kn">import</span> <span class="n">flatpages</span>
+
+<span class="o">...</span> <span class="n">URLS</span> <span class="o">..</span>
+
+<span class="c"># Setup django admin and flatpages</span>
+<span class="n">admin</span><span class="o">.</span><span class="n">autodiscover</span><span class="p">()</span>
+<span class="n">flatpages</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
+<span class="n">urlpatterns</span> <span class="o">+=</span> <span class="p">[</span> <span class="n">url</span><span class="p">(</span><span class="s">r&#39;^admin/&#39;</span><span class="p">,</span> <span class="n">include</span><span class="p">(</span><span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">)),</span> <span class="p">]</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Мы импортируем flatpages из django_markdown вместо стандартного пути.</p>
+</div>
+<ol class="arabic simple" start="4">
+<li>Настройка скинов wysiwyg (markitup по-умолчанию) settings.py:</li>
+</ol>
+<div class="highlight"><pre><span class="n">MARKDOWN_EDITOR_SKIN</span> <span class="o">=</span> <span class="s">&#39;simple&#39;</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Подробнее про настройку скинов и JS API читайте на сайте <a class="reference external" href="http://markitup.jaysalvat.com/home/">Markitup</a></p>
+</div>
+<p>Надеюсь это приложение и синтаксис будут вам полезны.</p>
+</div>
+
+============================================================================
+
+============================================================================
+
+============================================================================
+
+============================================================================
+Django-gitrevision, автоматическое обновление статики на клиенте
+============================================================================
+
+============================================================================
+2012-11-20T09:06:13+04:00
+============================================================================
+Константин
+============================================================================
+tag:tehkonst.github.com,2012-11-20:django-gitrevision-avtomaticheskoe-obnovlenie-statiki-na-kliente-en.html
+============================================================================
+<hr class="docutils" />
+<div class="contents topic" id="id1">
+<p class="topic-title first">Содержание:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id2" id="id5">Установка</a></li>
+<li><a class="reference internal" href="#id3" id="id6">Настройка и использование</a></li>
+<li><a class="reference internal" href="#id4" id="id7">Заключение</a></li>
+</ul>
+</div>
+<hr class="docutils" />
+<p>В современных веб-проектах, статические файлы (css, js ...) обычно жестко
+кешируются с целью экономики трафика и для предупреждения лишней нагрузки
+на сервер. В тоже время важно чтобы при обновлении статики, особенно JavaScript
+файлов, старые клиенты получили обновленную версию.</p>
+<p>В моем проекте используется <a class="reference external" href="http://git-scm.com">Git</a> и <a class="reference external" href="http://django-project.com">Django</a>. И вполне логично допустить, что
+актуальная версия статики зависит от номера последнего коммита в <a class="reference external" href="http://git-scm.com">Git</a>.</p>
+<p>Поэтому когда такая проблема возникла, я взял и написал очень простое
+django-приложение для отслеживания текущего <a class="reference external" href="http://git-scm.com">Git</a> коммита в проекте.</p>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id5">Установка</a></h2>
+<p>Приложение можно установить из <a class="reference external" href="http://pypi.python.org">PyPi</a></p>
+<div class="highlight"><pre>easy_install django-gitrevision
+
+<span class="c"># Или с помощью pip</span>
+
+pip install django-gitrevision
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id6">Настройка и использование</a></h2>
+<p>Необходимо добавить <cite>gitrevision</cite> в <strong>INSTALLED_APPS</strong>, settings.py:</p>
+<div class="highlight"><pre><span class="n">INSTALLED_APPS</span> <span class="o">+=</span> <span class="s">&#39;gitrevision&#39;</span><span class="p">,</span>
+</pre></div>
+<p>Если вы предполагаете использовать <cite>gitrevision</cite> шаблонах (для
+обновления статики, этого достаточно) добавьте в settings.py:</p>
+<div class="highlight"><pre><span class="n">TEMPLATE_CONTEXT_PROCESSORS</span> <span class="o">+=</span> <span class="s">&#39;gitrevision.context_processors.gitrevision&#39;</span><span class="p">,</span>
+</pre></div>
+<p>И используйте переменную <cite>GIT_REVISION</cite> в шаблонах:</p>
+<div class="highlight"><pre><span class="nt">&lt;link</span> <span class="na">href=</span><span class="s">&quot;/test.css?{{ GIT_REVISION }}&quot;</span> <span class="na">rel=</span><span class="s">&quot;stylesheet&quot;</span> <span class="na">type=</span><span class="s">&quot;text/css&quot;</span> <span class="na">media=</span><span class="s">&quot;screen&quot;</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;/test.js?{{ GIT_REVISION }}&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+<p>Если идентификатор коммита нужен во views, хотя мне трудно представить такую
+ситуацию, то подключите <cite>gitrevision</cite> в MIDDLEWARE_CLASSES.</p>
+<div class="highlight"><pre><span class="n">MIDDLEWARE_CLASSES</span> <span class="o">+=</span> <span class="s">&#39;gitrevision.middleware.GitRevision&#39;</span><span class="p">,</span>
+</pre></div>
+<p>Использование в views:</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">superview</span><span class="p">(</span> <span class="n">request</span> <span class="p">):</span>
+    <span class="n">gitrevision</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">git_revision</span>
+    <span class="o">...</span>
+</pre></div>
+<p>В этом случае нет необходимости подключать CONTEXT_PROCESSOR так как в шаблонах
+идентификатор будет доступен через <cite>request.git_revision</cite>.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p>Возможно вам понадобится добавить переменную с путем к вашему
+репозиторию в settings:</p>
+<div class="last"><div class="highlight"><pre><span class="n">GIT_PATH</span> <span class="o">=</span> <span class="o">&lt;</span><span class="n">path_to_your_git_repository</span><span class="o">&gt;</span>
+</pre></div>
+</div></div>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id7">Заключение</a></h2>
+<p>Приложение написано таким образом, что файловые операции происходят единожды
+при компиляции проекта. Таким образом нагрузки на сервер не создается.</p>
+<p>Теперь в текущих проектах у меня не возникает головной боли по поводу
+устаревшей версии статики на клиентах.</p>
+</div>
+
+============================================================================
+
+============================================================================
+
+============================================================================
+
+============================================================================
+
+============================================================================
+Pylama — аудит python-кода
+============================================================================
+
+============================================================================
+2012-09-02T00:00:00+04:00
+============================================================================
+Константин
+============================================================================
+tag:tehkonst.github.com,2012-09-02:pylama.html
+============================================================================
+<p>Процесс <a class="reference external" href="http://ru.wikipedia.org/wiki/%D0%9D%D0%B5%D0%BF%D1%80%D0%B5%D1%80%D1%8B%D0%B2%D0%BD%D0%B0%D1%8F_%D0%B8%D0%BD%D1%82%D0%B5%D0%B3%D1%80%D0%B0%D1%86%D0%B8%D1%8F">непрерывной интеграции</a> программных продуктов всегда был очень
+важен для разработке. В моем случае я не ограничеваюсь только тестированием
+(юнит или интеграционным), но также провожу и интроспекцию кода на соответствие
+стандартам или например ограничение логической вложенности.</p>
+<p>Во-втором случае код моих проектов автоматически прогоняется через ряд
+утилит: <strong>pyflakes</strong>, <strong>pep8</strong>, <strong>mccabe</strong>, <strong>pylint</strong>. Какое то время
+я использовал <a class="reference external" href="http://pypi.python.org/pypi/flake8/">Flake8</a> сочетающую в себе все эти линтеры. Но потом его
+возможностей мне стало не хватать. Схожий функционал уже был мной разработан
+для <a class="reference external" href="https://github.com/klen/python-mode">python-mode</a>, поэтому я вынес его в отдельный модуль.
+Так появился <a class="reference external" href="http://pypi.python.org/pypi/pylama/">Pylama</a>.</p>
+<p><a class="reference external" href="http://pypi.python.org/pypi/pylama/">Pylama</a> это утилита для проверки python-кода схожая с <a class="reference external" href="http://pypi.python.org/pypi/flake8/">Flake8</a>, но обладающая
+рядом улучшений.</p>
+<div class="section" id="id2">
+<h2>Установка</h2>
+<div class="highlight"><pre>$ pip install pylama
+</pre></div>
+</div>
+<div class="section" id="id3">
+<h2>Использование</h2>
+<p>Рекурсивная проверка текущей диектории:</p>
+<div class="highlight"><pre>$ pylama
+</pre></div>
+<p>Игнорировать определенные типы (группы типов) ошибок:</p>
+<div class="highlight"><pre>$ pylama -i W,E501
+</pre></div>
+<p>Изменение набора линтеров:</p>
+<div class="highlight"><pre>$ pylama -l &quot;pep8,mccabe&quot;
+</pre></div>
+</div>
+<div class="section" id="id4">
+<h2>Опции</h2>
+<div class="highlight"><pre>$ pylama --help
+
+usage: pylama [-h] [--ignore IGNORE] [--verbose] [--select SELECT]
+            [--linters LINTERS] [--complexity COMPLEXITY] [--skip SKIP]
+            [path]
+
+Code audit tool for python.
+
+positional arguments:
+path                  Path on file or directory.
+
+optional arguments:
+-h, --help            show this help message and exit
+--ignore IGNORE, -i IGNORE
+                        Ignore errors and warnings.
+--verbose, -v         Verbose mode.
+--select SELECT, -s SELECT
+                        Select errors and warnings.
+--linters LINTERS, -l LINTERS
+                        Select errors and warnings.
+--complexity COMPLEXITY, -c COMPLEXITY
+                        Set mccabe complexity.
+--skip SKIP           Skip files (Ex. messages.py)
+</pre></div>
+</div>
+<div class="section" id="pylama">
+<h2>Переключение настроек pylama из файла</h2>
+<p>В любом python-файле вы можете установить опции проверки для pylama.
+Они будут установлены только для данного файла.</p>
+<div class="highlight"><pre><span class="o">..</span> <span class="err">Где</span><span class="o">-</span><span class="err">то</span> <span class="err">в</span> <span class="err">коде</span>
+<span class="c"># Игнорировать все Warnings кроме W301</span>
+<span class="c"># lint_ignore=W:lint_select=W301</span>
+</pre></div>
+<p>Для выключения проверки текущего файла:</p>
+<div class="highlight"><pre><span class="c"># lint=0</span>
+</pre></div>
+<p>Разработка <a class="reference external" href="http://pypi.python.org/pypi/pylama/">pylama</a> ведется на Github: <a class="reference external" href="http://github.com/klen/pylama">http://github.com/klen/pylama</a></p>
+</div>
+
+============================================================================
+
+============================================================================
+
+============================================================================
+
+============================================================================
+
+============================================================================
+Pyradio — простой консольный радиоплеер
+============================================================================
+
+============================================================================
+2012-09-01T00:00:00+04:00
+============================================================================
+Константин
+============================================================================
+tag:tehkonst.github.com,2012-09-01:pyradio.html
+============================================================================
+<img alt="sources/pyradio.png" src="sources/pyradio.png" />
+<p>Очень простой клиент для прослушивания онлайн-радиостанций. Ничего лишнего.</p>
+<p>Автор оригинального проекта, прекратил его поддержку длительное время назад
+и пока не выходит на связь.</p>
+<p>Я исправил ошибки, доработал консольный клиент и собрал пакет для PYPI.
+Теперь можно просто ввести:</p>
+<div class="highlight"><pre>sudo pip install pyradio
+pyradio -p 15
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">На самом деле вам еще понадобиться установленный mplayer.</p>
+</div>
+<p>И слушать музыку.</p>
+
+============================================================================
+
+============================================================================
+
+============================================================================
+Неделя с Flask
+============================================================================
+
+============================================================================
+2012-08-31T00:00:00+04:00
+============================================================================
+Константин
+============================================================================
+tag:tehkonst.github.com,2012-08-31:some-flask-things.html
+============================================================================
+<hr class="docutils" />
+<div class="contents topic" id="id1">
+<p class="topic-title first">Содержание:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#flask-foundation" id="id5">Flask-Foundation</a></li>
+<li><a class="reference internal" href="#flask-mixer" id="id6">Flask-Mixer</a></li>
+<li><a class="reference internal" href="#flask-collect" id="id7">Flask-Collect</a></li>
+<li><a class="reference internal" href="#id3" id="id8">Заключение</a></li>
+</ul>
+</div>
+<hr class="docutils" />
+<p>Стал использовать <a class="reference external" href="http://flask.pocoo.org/">Flask</a> для небольших проектов. <a class="reference external" href="http://djangoproject.org/">Django</a> неимоверно разрослась,
+да и просто замылила глаз. В процессе работы родилось несколько полезных приложений.</p>
+<div class="section" id="flask-foundation">
+<h2><a class="toc-backref" href="#id5">Flask-Foundation</a></h2>
+<p>Я <a class="reference external" href="../notes-flask-opensource-ru.html">уже писал</a> про open-source проекты на <a class="reference external" href="http://flask.pocoo.org/">Flask</a> с хорошим исходным кодом.
+Но как показывает практика, для быстрого старта их недостаточно.</p>
+<p>Я собрал свою сборку: <a class="reference external" href="http://github.com/klen/Flask-Foundation">http://github.com/klen/Flask-Foundation</a> базового
+проекта на <a class="reference external" href="http://flask.pocoo.org/">Flask</a>, содержащую следующие вещи:</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/mrjoes/flask-admin/">Flask-Admin</a> — администрирование;</li>
+<li><a class="reference external" href="http://github.com/rduplain/flask-script">Flask-Script</a> — автоматизация;</li>
+<li><a class="reference external" href="http://packages.python.org/Flask-Cache/">Flask-Cache</a> — кеширование;</li>
+<li><a class="reference external" href="http://flask.pocoo.org/docs/extensiondev/">Flask-Debugtoolbar</a> — отладка;</li>
+<li><a class="reference external" href="http://github.com/mitsuhiko/flask-babel">Flask-Babel</a> — локализация;</li>
+<li><a class="reference external" href="http://github.com/rduplan/flask-wtf">Flask-WTF</a> — поддержка WTForms;</li>
+<li><a class="reference external" href="http://github.com/mbr/flask-bootstrap">Flask-Bootstrap</a> — стилизация;</li>
+<li><a class="reference external" href="http://packages.python.org/Flask-Mail/">Flask-Mail</a> — почта;</li>
+<li><a class="reference external" href="http://github.com/mitsuhiko/flask-sqlalchemy">Flask-SQLAlchemy</a> — ORM, базы данных;</li>
+<li><a class="reference external" href="http://packages.python.org/Flask-Testing/">Flask-Testing</a> — тестирование;</li>
+<li><a class="reference external" href="http://pypi.python.org/pypi/alembic/0.3.5">Alembic</a> — миграции бд;</li>
+</ul>
+<p>Проект содержит богатый функционал и может послужить хорошим примером для быстрого старта.</p>
+</div>
+<div class="section" id="flask-mixer">
+<h2><a class="toc-backref" href="#id6">Flask-Mixer</a></h2>
+<p>Фабрика генерации объектов из <a class="reference external" href="http://www.sqlalchemy.org/">SQLAlchemy</a> моделей. Создавалась мной в целях тестирования,
+но может использоваться и в других случаях (пакетная генерация данных).</p>
+<p>Адрес на <a class="reference external" href="http://github.com">Github</a>: <a class="reference external" href="http://github.com/klen/Flask-Mixer">http://github.com/klen/Flask-Mixer</a></p>
+<p>Примеры работы:</p>
+<div class="highlight"><pre><span class="c"># Простая генерация модели</span>
+<span class="n">user1</span> <span class="o">=</span> <span class="n">mixer</span><span class="o">.</span><span class="n">blend</span><span class="p">(</span><span class="n">User</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">user1</span><span class="o">.</span><span class="n">id</span> <span class="ow">and</span> <span class="n">user1</span><span class="o">.</span><span class="n">username</span> <span class="ow">and</span> <span class="n">user1</span><span class="o">.</span><span class="n">created_at</span>
+<span class="k">assert</span> <span class="n">user1</span><span class="o">.</span><span class="n">score</span> <span class="o">==</span> <span class="mi">50</span>
+<span class="k">assert</span> <span class="n">user</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">user</span> <span class="o">==</span> <span class="n">user</span>
+
+<span class="c"># Модель может быть задана строкой</span>
+<span class="n">role1</span> <span class="o">=</span> <span class="n">mixer</span><span class="o">.</span><span class="n">blend</span><span class="p">(</span><span class="s">&#39;app.models.Role&#39;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">role1</span><span class="o">.</span><span class="n">user</span>
+<span class="k">assert</span> <span class="n">role1</span><span class="o">.</span><span class="n">user_id</span> <span class="o">==</span> <span class="n">role1</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">id</span>
+
+<span class="c"># Генерация объекта с предопределенными значениями</span>
+<span class="n">user2</span> <span class="o">=</span> <span class="n">mixer</span><span class="o">.</span><span class="n">blend</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="s">&#39;test&#39;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">user2</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="s">&#39;test&#39;</span>
+
+<span class="c"># Это могут быть значения для референс-объектов</span>
+<span class="n">role1</span> <span class="o">=</span> <span class="n">mixer</span><span class="o">.</span><span class="n">blend</span><span class="p">(</span><span class="n">Role</span><span class="p">,</span> <span class="n">user__username</span><span class="o">=</span><span class="s">&#39;test2&#39;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">role2</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="s">&#39;test2&#39;</span>
+
+<span class="c"># Значение может быть функцией</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">mixer</span><span class="o">.</span><span class="n">blend</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">username</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span><span class="s">&#39;callable_value&#39;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="s">&#39;callable_value&#39;</span>
+
+<span class="c"># Принудительная установка случайного значения для поля с default value</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">mixer</span><span class="o">.</span><span class="n">blend</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">score</span><span class="o">=</span><span class="n">mixer</span><span class="o">.</span><span class="n">random</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">user</span><span class="o">.</span><span class="n">score</span> <span class="o">!=</span> <span class="mi">50</span>
+
+<span class="c"># Установка случайного значения из базы данных</span>
+<span class="n">profiles</span> <span class="o">=</span> <span class="n">Profile</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+<span class="n">user</span> <span class="o">=</span> <span class="n">mixer</span><span class="o">.</span><span class="n">blend</span><span class="p">(</span><span class="n">User</span><span class="p">,</span> <span class="n">profile</span><span class="o">=</span><span class="n">mixer</span><span class="o">.</span><span class="n">random</span><span class="p">)</span>
+<span class="k">assert</span> <span class="n">user</span><span class="o">.</span><span class="n">profile</span> <span class="ow">in</span> <span class="n">profiles</span>
+</pre></div>
+</div>
+<div class="section" id="flask-collect">
+<h2><a class="toc-backref" href="#id7">Flask-Collect</a></h2>
+<p>Нехватку такого приложения я почувствовал при первом же деплое <a class="reference external" href="http://flask.pocoo.org/">Flask</a>-проекта.
+Как известно раздавать статичные файлы (css, js и тп) питоном в нашем
+бизнесе не комильфо. Обычно проксирующий WSGI веб-сервер отдает их
+из определенной папки напрямую. Для сборки таких файлов из приложений проекта
+в <a class="reference external" href="http://djangoproject.org/">Django</a> существует встроенное приложение.</p>
+<p>Во <a class="reference external" href="http://flask.pocoo.org/">Flask</a> ничего подобного не нашлось. Есть инструкции в документации где
+рекомендовано отдавать статичные файлы веб-сервером, но нет ни слова о том
+как их собирать. Не найдя ничего на Pypi я написал свое.</p>
+<p>Использование:</p>
+<p>В коде:</p>
+<div class="highlight"><pre><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+<span class="n">collect</span> <span class="o">=</span> <span class="n">Collect</span><span class="p">(</span><span class="n">app</span><span class="p">)</span>
+<span class="n">collect</span><span class="o">.</span><span class="n">collect</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</pre></div>
+<p>или из консоли при использовании <a class="reference external" href="http://github.com/rduplain/flask-script">Flask-Script</a>:</p>
+<div class="highlight"><pre>$ ./manage.py collect
+</pre></div>
+<p>Адрес на <a class="reference external" href="http://github.com">Github</a>: <a class="reference external" href="http://github.com/klen/Flask-Collect">http://github.com/klen/Flask-Collect</a></p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id8">Заключение</a></h2>
+<p>В целом <a class="reference external" href="http://flask.pocoo.org/">Flask</a> мне нравится. Код чище, его меньше, работает быстрее.
+<a class="reference external" href="http://www.sqlalchemy.org/">SQLAlchemy</a> на голову уделывает на текущий момент <a class="reference external" href="http://djangoproject.org/">Django</a> ORM.</p>
+<p>Но порог вхождения гораздо выше, как ни странно, множество задач уже
+решенных сообществом <a class="reference external" href="http://djangoproject.org/">Django</a> тут приходится решать заново.</p>
+</div>
+
+============================================================================
+
+============================================================================
+
+============================================================================
+
+============================================================================
+М.Ю.Выгодский «Справочник по элементарной математике»
+============================================================================
+
+============================================================================
+2012-07-19T00:00:00+04:00
+============================================================================
+Константин
+============================================================================
+tag:tehkonst.github.com,2012-07-19:books-emat.html
+============================================================================
+<img alt="sources/books/emat.jpg" class="book-preview" src="sources/books/emat.jpg" />
+<p>Рекомендуется к прочтению раз в 10 лет. Вы еще помните формулу дискриминанта
+квадратной функции? А чему равен корень из -1? Бином Ньютона?</p>
+<p><strong>(8/10)</strong> | <a class="reference external" href="http://www.ozon.ru/context/detail/id/936387/?partner=klen">http://www.ozon.ru</a></p>
+
+============================================================================
+Полезности для GIT
+============================================================================
+
+============================================================================
+2012-07-19T00:00:00+04:00
+============================================================================
+Константин
+============================================================================
+tag:tehkonst.github.com,2012-07-19:some-git-things.html
+============================================================================
+<p>Алиас для более компактного <cite>git status</cite>:</p>
+<div class="highlight"><pre>$ git config --global alias.st &#39;status -sb&#39;
+$ git st
+</pre></div>
+<p>Алиас для редактирования последнего коммита:</p>
+<div class="highlight"><pre>$ git config --global alias.amend &#39;commit --amend -C HEAD&#39;
+$ git amend
+</pre></div>
+<p>Алиас для отмены последнего коммита:</p>
+<div class="highlight"><pre>$ git config --global alias.undo &#39;reset --soft HEAD^&#39;
+$ git undo
+</pre></div>
+<p>Предпочитаемый мной вывод <cite>diff</cite>:</p>
+<div class="highlight"><pre>$ git config --global alias.diff &#39;diff --word-diff&#39;
+$ git undo
+</pre></div>
+<p>«Визуальная» история веток в консоли:</p>
+<div class="highlight"><pre>$ git config --global alias.hist &quot;log --pretty=format:&#39;%Cred%h%Creset %ad | %Cgreen%s%d%Creset [%an]&#39; --graph --date=short&quot;
+</pre></div>
+<p>Удобная работа с <a class="reference external" href="https://github.com/nvie/gitflow/">Git-Flow</a>:</p>
+<div class="highlight"><pre>$ git config --global alias.hotfix &#39;flow hotfix&#39;
+$ git config --global alias.feature &#39;flow feature&#39;
+$ git config --global alias.release &#39;flow release&#39;
+</pre></div>
+<p>Автоматическая коррекция опечаток во вводимых командах:</p>
+<div class="highlight"><pre>$ git config --global help.autocorrect 1
+$ git comit
+$ git bronch
+</pre></div>
+<p>Автоматическая запись разрешенных мердж конфликтов, для будущего использования:</p>
+<div class="highlight"><pre>$ git config --global rerere.enabled 1
+</pre></div>
+<p>Получение веток с не влитыми данными:</p>
+<div class="highlight"><pre>$ git branch --no-merged
+</pre></div>
+<p>Список коммитов в ветке <em>branchA</em> отсуствующих в ветке <em>branchB</em>:</p>
+<div class="highlight"><pre>$ git log branchA ^branchB
+</pre></div>
+<p>Многие используют баш функцию <cite>__git_ps1</cite> для вывода названия текущей ветки,
+но не все знают, что ее можно сделать более информативной.</p>
+<div class="highlight"><pre># In your .bashrc or .profile:
+
+    GIT_PS1_SHOWDIRTYSTATE=1
+    GIT_PS1_SHOWSTASHSTATE=1
+
+    $ (develop *$):
+</pre></div>
+
+============================================================================
+
+============================================================================
+Николо Макиавелли, «Государь»
+============================================================================
+
+============================================================================
+2012-06-26T00:00:00+04:00
+============================================================================
+Константин
+============================================================================
+tag:tehkonst.github.com,2012-06-26:books-prince.html
+============================================================================
+<img alt="sources/books/prince.jpg" class="book-preview" src="sources/books/prince.jpg" />
+<p>Увлекательное пособие по выживанию правящих особ в средневековой европе.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Итак, государь должен позаботиться о том, чтобы с уст его не слетало ни одного слова, которое бы не было преисполнено пяти вышеописанных качеств, и чтобы видящим и слышащим его казалось, что он весь — воплощение милосердия, верности, прямодушия, человечности и благочестия. И нет ничего полезнее, чем видимость обладания этим последним качеством. Люди в целом судят больше на взгляд, чем на ощупь, ибо видеть дано всякому, а притронуться — нет. Каждый видит, чем ты кажешься, мало кто понимает, что ты есть на самом деле, и эти немногие не решатся выступить против мнения большинства, на стороне которого защищающее его величие государства, так что в действиях всех людей, а в особенности государей, кои никому не подсудны, смотрят на результат. Пусть государь победит и сохранит государство: средства будут всегда сочтены достойными, и всякий станет их хвалить, потому что толпа поглощена видимостью и исходом событий, а на свете всюду одна лишь толпа, и мнение немногих имеет вес, когда большинству не на что опереться. Один из государей нашего времени, которого неудобно называть * , только и проповедует, что верность и мир, хотя сам он заклятый враг и того и другого. И если бы он соблюдал свои призывы, то давно бы лишился и своего влияния, и владений.</p>
+</div>
+<p><strong>(7/10)</strong> | <a class="reference external" href="http://www.ozon.ru/context/detail/id/2184261/?partner=klen">http://www.ozon.ru</a></p>
+
+============================================================================
+Роберт Пенн Варрен, «Вся королевская рать»
+============================================================================
+
+============================================================================
+2012-06-24T00:00:00+04:00
+============================================================================
+Константин
+============================================================================
+tag:tehkonst.github.com,2012-06-24:books-army.html
+============================================================================
+<img alt="sources/books/army.jpg" class="book-preview" src="sources/books/army.jpg" />
+<p>Если существуют женские романы, то должны существовать и мужские. Книга — яркий представитель жанра.</p>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Они нереальны, думал я, шагая по вестибюлю, все до одного. Но я знал, что они реальны. Вы приезжаете в незнакомое место, такое, как Мейзон-Сити, и они кажутся нереальными, но вы знаете, что это не так. Вы знаете, что они были пацанами и лазили босиком в ручей, а когда подросли, выходили на закате во двор и смотрели, прислонившись к изгороди, на поле и на небо, не зная, что творится у них в душе, грустны они или счастливы, а потом они выросли и спали со своими женами, щекотали детишек, чтобы рассмешить их, уходили утром на работу и не знали, чего хотят, но знали, почему поступают так, а не иначе, и хотели поступать по-хорошему, потому что доводы в пользу этих поступков всегда были хорошие, а потом, состарившись и забыв обо всяких доводах, перестав совершать поступки, они сидят на лавочке перед шорной мастерской и облекают в слова доводы и поступки других людей, уже забыв о смысле этих доводов и поступков. И в одно прекрасное утро они будут лежать на кровати и смотреть в потолок, почти не видя его, потому что лампа прикрыта газетой, и не узнают лиц, склонившихся над кроватью, потому что комната полна дыма или тумана, от которого режет глаза и перехватывает горло. Да, они реальны, ничего не скажешь, и, может быть, потому кажутся вам нереальными, что сами вы не очень реальны.</p>
+</div>
+<p><strong>(8/10)</strong> | <a class="reference external" href="http://www.ozon.ru/context/detail/id/5380899/?partner=klen">http://www.ozon.ru</a></p>
+
+============================================================================
+PyServe. Веб-сервер одной командой
+============================================================================
+
+============================================================================
+2012-06-14T00:00:00+04:00
+============================================================================
+Константин
+============================================================================
+tag:tehkonst.github.com,2012-06-14:pyserve.html
+============================================================================
+<p>Иногда возникает необходимость быстро запустить веб-сервер
+нацеленный на содержимое локальной директории.</p>
+<p>При установленном python это делается буквально в одну строку.</p>
+<p>Для python версий 2.*:</p>
+<div class="highlight"><pre>$ python -m SimpleHTTPServer
+</pre></div>
+<p>Для python версий 3.*:</p>
+<div class="highlight"><pre>$ python -m http.server
+</pre></div>
+<p>Я часто пользовался этой функциональностью, например при отладке standalone HTML
+приложений работающих с удаленными API. В какой то момент мне захотелось большего:</p>
+<ul class="simple">
+<li>Одинаковый синтаксис для python 2 и 3 версий;</li>
+<li>Возможность отключения &quot;автоиндекса&quot; для директорий (игнорирование index.html);</li>
+<li>Возможность указания IP-адреса сервера (шаринг в сети);</li>
+<li>Возможность скрытия системных файлов;</li>
+<li>Более приятный внешний вид при выводе каталога директории;</li>
+<li>Возможность указания пути к директории (не только текущей);</li>
+</ul>
+<p>Так появился пакет <a class="reference external" href="https://github.com/klen/pyserve">PyServe</a>.</p>
+<img alt="sources/pyserve.png" src="sources/pyserve.png" />
+<div class="highlight"><pre>$ pip install pyserve
+</pre></div>
+<p>Пакет не содержит зависимостей, поддерживает всю вышеперечисленную функциональность и прост
+в установке. Теперь независимо от версии python вы можете запустить сервер одной командой:</p>
+<div class="highlight"><pre>$ serve
+</pre></div>
+
+============================================================================
+
+============================================================================
+
+============================================================================
+Создание python-пакетов (aka setup scripts)
+============================================================================
+
+============================================================================
+2012-06-13T00:00:00+04:00
+============================================================================
+Константин
+============================================================================
+tag:tehkonst.github.com,2012-06-13:create-python-packages.html
+============================================================================
+<hr class="docutils" />
+<div class="contents topic" id="id1">
+<p class="topic-title first">Содержание:</p>
+<ul class="simple">
+<li><a class="reference internal" href="#id2" id="id8">Создаем структуру проекта</a></li>
+<li><a class="reference internal" href="#setup-py" id="id9">Редактируем мета-информацию (setup.py)</a></li>
+<li><a class="reference internal" href="#id3" id="id10">Виртуальное окружение</a></li>
+<li><a class="reference internal" href="#id4" id="id11">Создание команд</a></li>
+<li><a class="reference internal" href="#id5" id="id12">Работа с версиями</a></li>
+<li><a class="reference internal" href="#id6" id="id13">Управление зависимостями</a></li>
+<li><a class="reference internal" href="#manifest-in" id="id14">Управление файлами проекта (MANIFEST.in)</a></li>
+<li><a class="reference internal" href="#id7" id="id15">Создание и запуск тестов</a></li>
+<li><a class="reference internal" href="#pypi-python-org" id="id16">Публикация пакета на pypi.python.org</a></li>
+</ul>
+</div>
+<hr class="docutils" />
+<p>Одна из действительно полезных вещей в python — это система скриптов установки. Любой, серьезно
+увлекающийся python-программированием разработчик рано или поздно сталкивается с ней.
+Но из-за гибкости инструментария скриптов установки, их документация весьма раздута.
+На текущий момент имеется набор утилит (<a class="reference external" href="http://pypi.python.org/pypi/setuptools">setuptools</a>, <a class="reference external" href="http://docs.python.org/distutils/">distutils</a>, <a class="reference external" href="http://pypi.python.org/pypi/distribute">distribute</a>) выполняющих
+одинаковые задачи.</p>
+<img alt="sources/state_of_packaging.jpg" src="sources/state_of_packaging.jpg" />
+<p>В данной статье я на конкретных примерах покажу как создать и настроить простой python-пакет.</p>
+<p>Наш проект будет иметь следующую функциональность:</p>
+<ul class="simple">
+<li>Метод возвращающий строку: &quot;Hello World!&quot;;</li>
+<li>Команда <cite>helloworld</cite> печатающая эту строку в стандартный вывод.</li>
+</ul>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Исходные коды для данной статьи можно увидеть по адресу: <a class="reference external" href="https://github.com/klen/klen.github.com/tree/master/_code/helloworld-project">https://github.com/klen/klen.github.com/tree/master/_code/helloworld-project</a></p>
+</div>
+<div class="section" id="id2">
+<h2><a class="toc-backref" href="#id8">Создаем структуру проекта</a></h2>
+<p>Для начала создадим директорию для пакета. Ее минимальный
+набор файлов состоит из: файла дистрибьюции (<cite>setup.py</cite>) описывающего
+метаданные и python кода проекта (в нашем случае модуля <tt class="docutils literal">helloworld</tt>).</p>
+<p>Также, xорошим тоном считается создание в корне директории файла с описанием проекта: <cite>README.txt</cite>.</p>
+<p>Получаем следующую структуру:</p>
+<pre class="literal-block">
+helloworld-project
+├── helloworld
+│   ├── __init__.py
+│   └── core.py
+├── setup.py
+└── README.txt
+</pre>
+<p>Наша корневая директория <cite>helloworld-project</cite> будет содержать мета-данные пакета и вспомогательные файлы
+(тесты, лицензию, документацию и т.д.), а поддиректория <cite>helloworld</cite> непосредственно сам модуль <cite>helloworld</cite>.</p>
+<p>Теперь отредактируем файл: <cite>helloworld/core.py</cite> и добавим логику нашего приложения (получение и вывод строки &quot;Hello World!&quot;):</p>
+<div class="highlight"><pre><span class="k">def</span> <span class="nf">get_message</span><span class="p">():</span>
+    <span class="k">return</span> <span class="s">&quot;Hello World!&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">print_message</span><span class="p">():</span>
+    <span class="k">print</span> <span class="n">get_message</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="section" id="setup-py">
+<h2><a class="toc-backref" href="#id9">Редактируем мета-информацию (setup.py)</a></h2>
+<p>Заполним файл описания <cite>README.rst</cite>:</p>
+<div class="highlight"><pre><span class="gh">Description</span>
+<span class="gh">===========</span>
+
+An example Hello World project.
+</pre></div>
+<p>Теперь отредактируем файл <cite>setup.py</cite>:</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">setuptools</span> <span class="kn">import</span> <span class="n">setup</span><span class="p">,</span> <span class="n">find_packages</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="kn">import</span> <span class="n">join</span><span class="p">,</span> <span class="n">dirname</span>
+
+<span class="n">setup</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">&#39;helloworld&#39;</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s">&#39;1.0&#39;</span><span class="p">,</span>
+    <span class="n">packages</span><span class="o">=</span><span class="n">find_packages</span><span class="p">(),</span>
+    <span class="n">long_description</span><span class="o">=</span><span class="nb">open</span><span class="p">(</span><span class="n">join</span><span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">__file__</span><span class="p">),</span> <span class="s">&#39;README.txt&#39;</span><span class="p">))</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span>
+<span class="p">)</span>
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Убедитесь, что в вашей системе доступны <a class="reference external" href="http://pypi.python.org/pypi/setuptools">setuptools</a>, в противном
+случае установите python-пакет <a class="reference external" href="http://pypi.python.org/pypi/distribute">distribute</a></p>
+</div>
+<p>Этих операций достаточно, чтобы собрать пакет дистрибьюции. Выполните команду
+сборки:</p>
+<div class="highlight"><pre>$ python setup.py sdist
+</pre></div>
+<p>В случае успеха вы получите файл: <cite>dist/helloworld-1.0.tar.gz</cite>. Это полноценный,
+архивированный python-пакет и вы можете распространять его среди прочих разработчиков.</p>
+</div>
+<div class="section" id="id3">
+<h2><a class="toc-backref" href="#id10">Виртуальное окружение</a></h2>
+<p><a class="reference external" href="http://pypi.python.org/pypi/virtualenv/">Virtualenv</a> — пакет применяемый для создания изолированного python-окружения. Используем
+его для тестирования нашего проекта.</p>
+<p>Создадим окружение <tt class="docutils literal">env</tt>:</p>
+<div class="highlight"><pre>$ virtualenv env
+</pre></div>
+<p>Команда создаст директорию <tt class="docutils literal">env</tt> внутри нашего проекта и установит туда <tt class="docutils literal">python</tt>, <tt class="docutils literal">pip</tt> и <tt class="docutils literal">distribute</tt>.
+Произведем в него установку нашего проекта.</p>
+<div class="highlight"><pre>$ ./env/bin/python setup.py install
+running install
+running bdist_egg
+running egg_info
+[...]
+Processing dependencies for helloworld==1.0
+Finished processing dependencies for helloworld==1.0
+</pre></div>
+<p>И протестируем его работоспособность:</p>
+<div class="highlight"><pre>$ ./env/bin/python
+&gt;&gt;&gt; import helloworld.core as hw
+&gt;&gt;&gt; hw.get_message()
+&#39;Hello World!&#39;
+&gt;&gt;&gt; hw.print_message()
+Hello World!
+</pre></div>
+<p>Все работает. Осталось добавить поддержку команды <tt class="docutils literal">helloworld</tt> в консоли.</p>
+</div>
+<div class="section" id="id4">
+<h2><a class="toc-backref" href="#id11">Создание команд</a></h2>
+<p>Для создания команды <tt class="docutils literal">helloworld</tt> изменим файл <cite>setup.py</cite>:</p>
+<div class="highlight"><pre><span class="n">setup</span><span class="p">(</span>
+    <span class="o">...</span>
+    <span class="n">entry_points</span><span class="o">=</span><span class="p">{</span>
+        <span class="s">&#39;console_scripts&#39;</span><span class="p">:</span>
+            <span class="p">[</span><span class="s">&#39;helloworld = helloworld.core:print_message&#39;</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+</pre></div>
+<p>В параметре <tt class="docutils literal">entry_points</tt> мы задаем словарь с &quot;точками вызова&quot; нашего приложения. Ключ <tt class="docutils literal">console_scripts</tt>
+задает список создаваемых исполняемых скриптов (в Windows это будут exe-файлы). В данном случае
+мы указали создание исполняемого скрипта <tt class="docutils literal">helloworld</tt> при вызове которого будет запускаться метод <tt class="docutils literal">print_message</tt>
+из модуля <tt class="docutils literal">helloworld.core</tt>.</p>
+<p>Переустановим модуль в наше окружение и проверим работу созданного скрипта (для этого прийдется активировать наше окружение):</p>
+<div class="highlight"><pre>$ ./env/bin/python setup.py install
+$ source ./env/bin/activate
+(env)
+$ helloworld
+Hello World!
+(env)
+</pre></div>
+<p>Похоже все работает.</p>
+</div>
+<div class="section" id="id5">
+<h2><a class="toc-backref" href="#id12">Работа с версиями</a></h2>
+<p>Номер версии важная часть любого проекта. От него зависит обновление пакетов
+и разрешение зависимостей. В примере выше мы указали номер версии <tt class="docutils literal">1.0</tt> в файле <cite>setup.py</cite>.
+Более правильное решение перенести его в файл <cite>helloworld/__init__.py</cite> чтобы сделать доступным
+в python-коде. По существующим соглашения для хранения номера версии в модуле, используется
+переменная <tt class="docutils literal">__version__</tt>.</p>
+<p><cite>helloworld/__init__.py`</cite>:</p>
+<div class="highlight"><pre><span class="n">__version__</span> <span class="o">=</span> <span class="s">&#39;1.0&#39;</span>
+</pre></div>
+<p>Изменим файл <cite>setup.py</cite>, чтобы нам не приходилось редактировать номер версии в двух местах:</p>
+<div class="highlight"><pre><span class="o">...</span>
+<span class="kn">import</span> <span class="nn">helloworld</span>
+
+<span class="n">setup</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">&#39;helloworld&#39;</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="n">helloworld</span><span class="o">.</span><span class="n">__version__</span><span class="p">,</span>
+    <span class="o">...</span>
+</pre></div>
+<p>Существует множество систем наименования версий в python обычно рекомендуется использовать <a class="reference external" href="http://www.python.org/dev/peps/pep-0386/">PEP386</a>.
+Можно представить, что обозначение версии состоит из номера мажорного, минорного релизов
+(номера багфикса при необходимости), разделенных точками. В последней части версии
+разрешается использовать буквы латинского алфавита. Примеры из официальной документации:</p>
+<pre class="literal-block">
+0.4       0.4.0  (these two are equivalent)
+0.4.1
+0.5a1
+0.5b3
+0.5
+0.9.6
+1.0
+1.0.4a3
+1.0.4b1
+1.0.4
+</pre>
+</div>
+<div class="section" id="id6">
+<h2><a class="toc-backref" href="#id13">Управление зависимостями</a></h2>
+<p>Добавим функциональности нашему проекту. Создадим команду <tt class="docutils literal">serve</tt> которая будет запускать
+вебсервер отдающий страницу со строкой &quot;Hello world!&quot; генерируемой нашим модулем. Для этого
+воспользуемся пакетом <a class="reference external" href="http://pypi.python.org/pypi/Flask/0.8">Flask</a>.</p>
+<p>Добавляем файл <cite>helloworld/web.py</cite>:</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">render_template</span>
+
+<span class="kn">from</span> <span class="nn">helloworld.core</span> <span class="kn">import</span> <span class="n">get_message</span>
+
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+
+<span class="nd">@app.route</span><span class="p">(</span><span class="s">&quot;/&quot;</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
+    <span class="k">return</span> <span class="n">render_template</span><span class="p">(</span><span class="s">&#39;index.html&#39;</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="n">get_message</span><span class="p">())</span>
+
+
+<span class="k">def</span> <span class="nf">run_server</span><span class="p">():</span>
+    <span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+<p>И файл <cite>helloworld/templates/index.html</cite>:</p>
+<div class="highlight"><pre><span class="cp">&lt;!DOCTYPE HTML&gt;</span>
+<span class="nt">&lt;body&gt;</span>{{message}}<span class="nt">&lt;/body&gt;</span>
+</pre></div>
+<p>И опишем команду <tt class="docutils literal">serve</tt> в файле <cite>setup.py</cite>:</p>
+<div class="highlight"><pre><span class="o">...</span>
+<span class="n">entry_points</span><span class="o">=</span><span class="p">{</span>
+   <span class="s">&#39;console_scripts&#39;</span><span class="p">:</span> <span class="p">[</span>
+       <span class="s">&#39;helloworld = helloworld.core:print_message&#39;</span><span class="p">,</span>
+       <span class="s">&#39;serve = helloworld.web:run_server&#39;</span><span class="p">,</span>
+       <span class="p">]</span>
+   <span class="p">},</span>
+<span class="o">...</span>
+</pre></div>
+<p>Теперь в нашем проекте появилась зависимость от пакета <a class="reference external" href="http://pypi.python.org/pypi/Flask/0.8">Flask</a>. Без его установки наше приложение
+не будет правильно работать. За описание зависимостей в файле <cite>setup.py</cite> отвечает параметр <tt class="docutils literal">install_requires</tt>:</p>
+<div class="highlight"><pre><span class="o">...</span>
+<span class="n">install_requires</span><span class="o">=</span><span class="p">[</span>
+    <span class="s">&#39;Flask==0.8&#39;</span>
+<span class="p">]</span>
+</pre></div>
+<p>Проверим установку зависимостей обновив наш пакет и работу команды <tt class="docutils literal">serve</tt>:</p>
+<div class="highlight"><pre>$ ./env/bin/python setup.py develop
+...
+Processing dependencies for helloworld==0.1
+Searching for Flask==0.8
+...
+$ serve
+   * Running on http://127.0.0.1:5000/
+</pre></div>
+<p>Открыв браузер по адресу <tt class="docutils literal"><span class="pre">http://127.0.0.1:5000</span></tt> вы должны увидеть нашу страницу.</p>
+</div>
+<div class="section" id="manifest-in">
+<h2><a class="toc-backref" href="#id14">Управление файлами проекта (MANIFEST.in)</a></h2>
+<p>На текущий момент при сборке нашего пакета <tt class="docutils literal">distutils</tt> включает в него только python-файлы.
+Необходимо включить в него файл <cite>helloworld/templates/index.html</cite> без которого проект работать не будет.</p>
+<p>Чтобы сделать это мы должны сообщить <tt class="docutils literal">distutils</tt> какие еще файлы надо включать в наш проект. Один из способов —
+это создание файла <cite>MANIFEST.in</cite>:</p>
+<div class="highlight"><pre>recursive-include helloworld/templates *.html
+</pre></div>
+<p>Данная команда указывает <tt class="docutils literal">distutils</tt> на включение в проект <em>всех</em> html файлов в директории <cite>helloworld/templates</cite>.</p>
+<p>Также придется обновить <cite>setup.py</cite>:</p>
+<div class="highlight"><pre><span class="o">...</span>
+<span class="n">setup</span><span class="p">(</span>
+    <span class="o">...</span>
+    <span class="n">include_package_data</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="o">...</span>
+    <span class="p">)</span>
+</pre></div>
+<p>Теперь шаблоны будут включены в наш проект.</p>
+</div>
+<div class="section" id="id7">
+<h2><a class="toc-backref" href="#id15">Создание и запуск тестов</a></h2>
+<p>Хорошей практикой считается создание тестов для вашего проекта.
+Добавим простейшую реализацию, файл <cite>tests.py</cite>:</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">unittest</span> <span class="kn">import</span> <span class="n">TestCase</span>
+<span class="kn">from</span> <span class="nn">helloworld.core</span> <span class="kn">import</span> <span class="n">get_message</span>
+
+<span class="k">class</span> <span class="nc">HelloworldTestCase</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_helloworld</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">get_message</span><span class="p">(),</span> <span class="s">&#39;Hello World!&#39;</span><span class="p">)</span>
+</pre></div>
+<p>И обновим <cite>setup.py</cite>:</p>
+<div class="highlight"><pre><span class="o">...</span>
+<span class="n">setup</span><span class="p">(</span>
+    <span class="o">...</span>
+    <span class="n">test_suite</span><span class="o">=</span><span class="s">&#39;tests&#39;</span><span class="p">,</span>
+    <span class="o">...</span>
+    <span class="p">)</span>
+</pre></div>
+<p>Теперь мы можем произвести предварительное тестирование нашего проекта:</p>
+<div class="highlight"><pre>$ python setup.py test
+running test
+running egg_info
+writing requirements to helloworld.egg-info/requires.txt
+writing helloworld.egg-info/PKG-INFO
+writing top-level names to helloworld.egg-info/top_level.txt
+writing dependency_links to helloworld.egg-info/dependency_links.txt
+writing entry points to helloworld.egg-info/entry_points.txt
+reading manifest file &#39;helloworld.egg-info/SOURCES.txt&#39;
+reading manifest template &#39;MANIFEST.in&#39;
+writing manifest file &#39;helloworld.egg-info/SOURCES.txt&#39;
+running build_ext
+test_helloworld (tests.HelloworldTestCase) ... ok
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+OK
+</pre></div>
+<p>Обратите внимание, что для запуска тестов даже не нужно создание виртуального окружения. Необходимые
+зависимости будут скачаны в директорию проекта в виде <tt class="docutils literal">egg</tt> пакетов.</p>
+</div>
+<div class="section" id="pypi-python-org">
+<h2><a class="toc-backref" href="#id16">Публикация пакета на pypi.python.org</a></h2>
+<p>Прежде чем вы сможете опубликовать свой проект вам необходимо зарегистрироваться на <a class="reference external" href="http://pypi.python.org">PyPi</a>.
+Запишите ваши реквизиты в файле <cite>~/.pypirc</cite>:</p>
+<div class="highlight"><pre>[distutils]
+index-servers =
+    pypi
+
+[pypi]
+username:&lt;username&gt;
+password:&lt;password&gt;
+</pre></div>
+<p>Все ваш проект готов к публикации. Достаточно ввести соответствующую команду:</p>
+<div class="highlight"><pre>$ python setup.py register sdist upload
+</pre></div>
+<div class="note">
+<p class="first admonition-title">Note</p>
+<p class="last">Вы не сможете опубликовать пакет <cite>helloworld</cite>, тк данное имя проекта уже занято.</p>
+</div>
+</div>
+
+============================================================================
+Traceback (most recent call last):
+  File "D:\staticSites\.pelican_py3\Scripts\pelican-script.py", line 9, in <module>
+    load_entry_point('pelican==3.1', 'console_scripts', 'pelican')()
+  File "D:\staticSites\.pelican_py3\lib\site-packages\pelican-3.1-py3.2.egg\pelican\__init__.py", line 302, in main
+    pelican.run()
+  File "D:\staticSites\.pelican_py3\lib\site-packages\pelican-3.1-py3.2.egg\pelican\__init__.py", line 184, in run
+    p.generate_output(writer)
+  File "D:\staticSites\.pelican_py3\lib\site-packages\pelican-3.1-py3.2.egg\pelican\generators.py", line 365, in generate_output
+    self.generate_feeds(writer)
+  File "D:\staticSites\.pelican_py3\lib\site-packages\pelican-3.1-py3.2.egg\pelican\generators.py", line 141, in generate_feeds
+    self.settings['FEED_ATOM'])
+  File "D:\staticSites\.pelican_py3\lib\site-packages\pelican-3.1-py3.2.egg\pelican\writers.py", line 91, in write_feed
+    feed.write(fp, 'utf-8')
+  File "D:\staticSites\.pelican_py3\lib\site-packages\feedgenerator-1.2.1-py3.2.egg\feedgenerator\django\utils\feedgenerator.py", line 308, in write
+    self.write_items(handler)
+  File "D:\staticSites\.pelican_py3\lib\site-packages\feedgenerator-1.2.1-py3.2.egg\feedgenerator\django\utils\feedgenerator.py", line 342, in write_items
+    self.add_item_elements(handler, item)
+  File "D:\staticSites\.pelican_py3\lib\site-packages\feedgenerator-1.2.1-py3.2.egg\feedgenerator\django\utils\feedgenerator.py", line 370, in add_item_elements
+    handler.addQuickElement("summary", item['description'], {"type": "html"})
+  File "D:\staticSites\.pelican_py3\lib\site-packages\feedgenerator-1.2.1-py3.2.egg\feedgenerator\django\utils\xmlutils.py", line 16, in addQuickElement
+    self.characters(contents)
+  File "J:\Python32\Lib\xml\sax\saxutils.py", line 182, in characters
+    self._write(escape(content))
+  File "J:\Python32\Lib\xml\sax\saxutils.py", line 96, in _write
+    self._out.write(text)
+  File "D:\staticSites\.pelican_py3\lib\encodings\cp1251.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 3541-3543: character maps to <undefined>
