@@ -1,0 +1,38 @@
+{
+  "mode": "127.0.0.1:9050",
+  "sync": false,
+  "autoBackup": false,
+  "passthrough": "",
+  "theme": "",
+  "container": {
+    "container-1": "",
+    "container-2": "",
+    "container-3": "",
+    "container-4": "",
+    "incognito": ""
+  },
+  "commands": {
+    "quickAdd": "",
+    "setProxy": "",
+    "setTabProxy": ""
+  },
+  "data": [
+    {
+      "active": true,
+      "cc": "",
+      "city": "",
+      "color": "#d3d3d3",
+      "exclude": [],
+      "hostname": "127.0.0.1",
+      "include": [],
+      "pac": "",
+      "pacString": "",
+      "password": "",
+      "port": "9050",
+      "proxyDNS": true,
+      "title": "Tor",
+      "type": "socks5",
+      "username": ""
+    }
+  ]
+}
